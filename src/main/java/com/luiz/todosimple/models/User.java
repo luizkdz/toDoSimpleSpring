@@ -1,4 +1,4 @@
-package com.lucasangelo.todosimple.models;
+package com.luiz.todosimple.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
