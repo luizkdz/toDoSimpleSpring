@@ -5,7 +5,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -18,7 +21,18 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 @Entity
 @Table(name = "user")
 public class User {
+
+    @OneToMany(mappedBy = "user")
+    private List<Task> listaTask = new ArrayList<Task>();
     
+    public List<Task> getListaTask() {
+        return listaTask;
+    }
+
+    public void setListaTask(List<Task> listaTask) {
+        this.listaTask = listaTask;
+    }
+
     public interface CreateUser{
 
     }
