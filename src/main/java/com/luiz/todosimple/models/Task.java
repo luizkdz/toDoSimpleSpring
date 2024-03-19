@@ -1,5 +1,6 @@
 package com.luiz.todosimple.models;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,14 +18,16 @@ public class Task {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long id;
     
+    @Column(name = "description")
     @NotNull
     @NotEmpty
     @Size(min = 3 , max = 255)
     private String description;
 
-    
+    @Column(name = "user")
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false, updatable = false)
     private User user;

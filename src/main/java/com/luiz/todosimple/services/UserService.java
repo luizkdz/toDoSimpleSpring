@@ -8,19 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.luiz.todosimple.models.User;
-import com.luiz.todosimple.repositories.TaskRepository;
 import com.luiz.todosimple.repositories.UserRepository;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository ur;
-    @Autowired
-    private TaskRepository tr;
 
-    public UserService(UserRepository ur, TaskRepository tr) {
+    public UserService(UserRepository ur) {
         this.ur = ur;
-        this.tr = tr;
+        
     }
 
     public User findById(Long id){
