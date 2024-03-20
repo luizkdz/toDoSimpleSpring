@@ -41,12 +41,11 @@ public class UserController {
     }
     
     
-    
     @Validated(CreateUser.class)
     @PostMapping()
     public ResponseEntity<Void> createUser(@Valid @RequestBody User user){
         user.setId(null);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
         us.cadastraUser(user);
         return ResponseEntity.created(uri).build();
 

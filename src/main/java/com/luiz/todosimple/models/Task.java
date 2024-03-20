@@ -27,7 +27,6 @@ public class Task {
     @Size(min = 3 , max = 255)
     private String description;
 
-    @Column(name = "user")
     @ManyToOne
     @JoinColumn(name="user_id", nullable = false, updatable = false)
     private User user;
@@ -83,7 +82,7 @@ public class Task {
     }
 
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
