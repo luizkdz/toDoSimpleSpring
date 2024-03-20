@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.luiz.todosimple.models.Task;
-import com.luiz.todosimple.repositories.TaskRepository;
+
 import com.luiz.todosimple.services.TaskService;
 
 @RestController
@@ -27,28 +27,25 @@ import com.luiz.todosimple.services.TaskService;
 public class TaskController {
         @Autowired   
         TaskService ts; 
-
-        TaskRepository tr;
-
     
         @GetMapping(value = "/{id}")
         public ResponseEntity<Task> findById(@PathVariable Long id){
             Task tk = ts.findById(id);
-            return ResponseEntity.ok().body(tk);
+            return ResponseEntity.ok(tk);
     }
 
     @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<Task>> allTasksFromUserId(@PathVariable Long user_Id){
-        List<Task> lista = tr.findByUser_Id(user_Id);
+    public ResponseEntity<List<Task>> allTasksFromUserId(@PathVariable Long userId){
+        List<Task> lista = ts.findAllByUserId(userId);
         return ResponseEntity.ok().body(lista);
         }
         
-    @PostMapping(value = "/{id}")
+    @PostMapping
     @Validated
-    public ResponseEntity<Void> createTask( @RequestBody Task task){
-        task.setId(null);
+    public ResponseEntity<Void> createTask(@Valid @RequestBody Task task){
+        ts.createTask(task);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(task.getId()).toUri();
-        task = ts.createTask(task);
+
         return ResponseEntity.created(uri).build();
 
     }

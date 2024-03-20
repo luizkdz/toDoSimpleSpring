@@ -1,5 +1,6 @@
 package com.luiz.todosimple.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -20,16 +21,23 @@ public class TaskService {
     UserService us;
 
 
+
+
+
     public Task findById(long id){
         Optional<Task> task = tr.findById(id);
         return task.orElseThrow(() -> new RuntimeException("Não foi encontrada a task com esse id"));
     }
 
+    public List<Task> findAllByUserId(Long userId){
+        List<Task> lista = tr.findByUser_Id(userId);
+        return lista;
+    }
+
     
     @Transactional
     public Task createTask(Task tk){
-        User user = us.findById(tk.getUser().getId());
-        user.setId(null);
+        us.findById(tk.getUser().getId()); 
         tk = tr.save(tk);
         return tk;      
     }
