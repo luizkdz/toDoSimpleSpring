@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.luiz.todosimple.models.User;
 import com.luiz.todosimple.repositories.UserRepository;
 
+
 @Service
 public class UserService {
     @Autowired
@@ -22,7 +23,7 @@ public class UserService {
 
     public User findById(Long id){
         Optional<User> user = ur.findById(id);
-        return user.orElseThrow(() -> new RuntimeException("Não é do tipo User"));
+        return user.orElseThrow(() -> new ObjectNotFoundException("Não é do tipo User"));
     }
 
     @Transactional
@@ -47,7 +48,7 @@ public class UserService {
             ur.deleteById(id);
         }
         catch(Exception e) {
-            throw new RuntimeException("O id está vinculado a outras entidades");
+            throw new DataBindingViolationException();
         }
     }
     public UserService() {

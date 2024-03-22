@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.luiz.todosimple.models.Task;
-import com.luiz.todosimple.models.User;
 import com.luiz.todosimple.repositories.TaskRepository;
 
 @Service
@@ -26,7 +25,7 @@ public class TaskService {
 
     public Task findById(long id){
         Optional<Task> task = tr.findById(id);
-        return task.orElseThrow(() -> new RuntimeException("Não foi encontrada a task com esse id"));
+        return task.orElseThrow(() -> new ObjectNotFoundException("Não foi encontrada a task com esse id"));
     }
 
     public List<Task> findAllByUserId(Long userId){
@@ -56,7 +55,7 @@ public class TaskService {
             tr.deleteById(id);
                 }
                 catch(Exception e){
-                    throw new RuntimeException("Não foi possível deletar, há entidades relacionadas");
+                    throw new DataBindingViolationException();
                 }
     }
 
