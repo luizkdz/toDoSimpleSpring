@@ -2,13 +2,17 @@ package com.luiz.todosimple.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -21,8 +25,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    @Autowired
+    UserDetailsService userDetailsService;
     
-    private static final String[] Public_Matchers = {  
+
+    private static final String[] public_Matchers = {  
     "/"
 };
     private static final String[] post_Matchers = {
@@ -30,20 +38,27 @@ public class SecurityConfig {
         "/user"
     };
 
-   
-   
+    @Autowired
+    private AuthenticationManager am;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
+
+
+        AuthenticationManagerBuilder amb = http.getSharedObject(AuthenticationManagerBuilder.class);
+        amb.userDetailsService(this.userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+
+        this.am = amb.build();
 
         http.csrf(csrf -> csrf.disable());
 
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeRequests(requests -> requests.
-                antMatchers(HttpMethod.POST, Public_Matchers).permitAll().
+                antMatchers(HttpMethod.POST, public_Matchers).permitAll().
 
-                antMatchers(Public_Matchers).permitAll().anyRequest().authenticated());
+                antMatchers(post_Matchers).permitAll().anyRequest().authenticated());
 
         return http.build();    
     } 

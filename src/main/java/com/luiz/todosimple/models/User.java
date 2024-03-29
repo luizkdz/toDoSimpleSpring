@@ -1,6 +1,7 @@
 package com.luiz.todosimple.models;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
@@ -8,31 +9,37 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-
+import javax.persistence.ElementCollection;
 import javax.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.luiz.todosimple.models.Enums.ProfileEnum;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 @Table(name = "user")
+
 public class User {
 
-    @OneToMany(mappedBy = "user")
-    private List<Task> listaTask = new ArrayList<Task>();
     
-    public List<Task> getListaTask() {
-        return listaTask;
-    }
-
-    public void setListaTask(List<Task> listaTask) {
-        this.listaTask = listaTask;
-    }
-
     public interface CreateUser{
 
     }
@@ -61,67 +68,34 @@ public class User {
     @Size(groups = {CreateUser.class,UpdateUser.class} ,min = 8, max = 60)
     private String senha;
 
-    public Long getId() {
-        return id;
+
+    @OneToMany(mappedBy = "user")
+    private List<Task> listaTask = new ArrayList<Task>();
+    
+    public List<Task> getListaTask() {
+        return listaTask;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setListaTask(List<Task> listaTask) {
+        this.listaTask = listaTask;
     }
 
-    public String getUsername() {
-        return username;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @CollectionTable(name = "user_profile")
+    @Column(name = "profile", nullable = false)
+    private Set<Integer> profiles = new HashSet<>();
+
+
+    public Set<ProfileEnum> getProfiles(){
+        return this.profiles.stream().map(x -> ProfileEnum.toEnum(x)).collect(Collectors.toSet());
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void addProfile(ProfileEnum profileEnum){
+        this.profiles.add(profileEnum.getCode());
     }
 
-    public String getSenha() {
-        return senha;
-    }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public User() {
-    }
-
-    public User(Long id, String username, String senha) {
-        this.id = id;
-        this.username = username;
-        this.senha = senha;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : this.id.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == this)
-        return true;
-        if(obj == null)
-            return false;
-        if(!(obj instanceof User))
-        return false;
-        User other = (User) obj;
-        if(this.id == null)
-          if(other.id != null)
-            return false;
-            else if(!this.id.equals(other.id))
-                return false;
-            return Objects.equals(this.id, other.id) && Objects.equals(this.username, other.username) && Objects.equals(this.senha, other.senha);
-            
-        
-    }
-
-   
 
     
 

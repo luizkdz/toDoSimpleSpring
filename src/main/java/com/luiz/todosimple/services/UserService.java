@@ -4,10 +4,14 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.luiz.todosimple.models.User;
+import com.luiz.todosimple.models.Enums.ProfileEnum;
 import com.luiz.todosimple.repositories.UserRepository;
 
 
@@ -15,6 +19,9 @@ import com.luiz.todosimple.repositories.UserRepository;
 public class UserService {
     @Autowired
     private UserRepository ur;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public UserService(UserRepository ur) {
         this.ur = ur;
@@ -29,6 +36,8 @@ public class UserService {
     @Transactional
     public User cadastraUser(User usuario){
         usuario.setId(null);
+        usuario.setSenha(this.passwordEncoder.encode(usuario.getSenha()));
+        usuario.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
         usuario = ur.save(usuario);
         return usuario;
     }
@@ -36,7 +45,7 @@ public class UserService {
     @Transactional
     public User alteraUser(User usuario){
         User newUsuario = findById(usuario.getId());
-        newUsuario.setSenha(usuario.getSenha());
+        newUsuario.setSenha(this.passwordEncoder.encode(usuario.getSenha()));
         return ur.save(newUsuario);
 
 
