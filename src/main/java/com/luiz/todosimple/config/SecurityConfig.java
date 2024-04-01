@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.luiz.todosimple.services.JWTUtil;
+
 
 
 @Configuration
@@ -41,10 +43,12 @@ public class SecurityConfig {
     @Autowired
     private AuthenticationManager am;
 
+    private JWTUtil jwt;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
-
+        
 
         AuthenticationManagerBuilder amb = http.getSharedObject(AuthenticationManagerBuilder.class);
         amb.userDetailsService(this.userDetailsService).passwordEncoder(bCryptPasswordEncoder());
