@@ -1,5 +1,6 @@
 package com.luiz.todosimple.services;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -7,12 +8,14 @@ import javax.transaction.Transactional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.luiz.todosimple.models.User;
 import com.luiz.todosimple.models.Enums.ProfileEnum;
 import com.luiz.todosimple.repositories.UserRepository;
+import com.luiz.todosimple.security.UserSpringSecurity;
 
 
 @Service
@@ -29,6 +32,10 @@ public class UserService {
     }
 
     public User findById(Long id){
+
+        UserSpringSecurity uss = authenticated();
+        if(Objects.isNull(uss) || !uss.hasRole(ProfileEnum.ADMIN) || !id.equals(uss.getId()))
+        throw new RuntimeException();
         Optional<User> user = ur.findById(id);
         return user.orElseThrow(() -> new ObjectNotFoundException("Não é do tipo User"));
     }
@@ -62,5 +69,14 @@ public class UserService {
     }
     public UserService() {
         
+    }
+
+    public static UserSpringSecurity authenticated(){
+        try{
+            return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 }

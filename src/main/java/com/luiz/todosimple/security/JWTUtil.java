@@ -1,4 +1,4 @@
-package com.luiz.todosimple.services;
+package com.luiz.todosimple.security;
 import java.util.Date;
 import java.util.Objects;
 
@@ -16,7 +16,6 @@ public class JWTUtil {
 
     @Value("${jwt.secret}")
     private String secret;
-
 
     @Value("${jwt.expiration}")
     private Long expiration;
@@ -54,6 +53,13 @@ public class JWTUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public String getUsername(String token){
+        Claims claims = getClaims(token);
+        if(Objects.nonNull(claims))
+        return claims.getSubject();
+        return null;
     }
 
 

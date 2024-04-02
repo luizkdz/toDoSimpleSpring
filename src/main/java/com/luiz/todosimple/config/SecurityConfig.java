@@ -19,7 +19,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.luiz.todosimple.services.JWTUtil;
+import com.luiz.todosimple.security.JWTAuthenticationFilter;
+import com.luiz.todosimple.security.JWTAuthorizationFilter;
+import com.luiz.todosimple.security.JWTUtil;
 
 
 
@@ -64,7 +66,14 @@ public class SecurityConfig {
 
                 antMatchers(post_Matchers).permitAll().anyRequest().authenticated());
 
-        return http.build();    
+        
+        http.addFilter(new JWTAuthenticationFilter(this.am, this.jwt));
+        http.addFilter(new JWTAuthorizationFilter(am, jwt, userDetailsService));
+        
+                return http.build();    
+   
+        
+   
     } 
 
 

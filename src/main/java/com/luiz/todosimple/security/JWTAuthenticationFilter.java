@@ -2,7 +2,6 @@ package com.luiz.todosimple.security;
 
 
 import java.io.IOException;
-import java.net.http.HttpRequest;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luiz.todosimple.exceptions.GlobalExceptionHandler;
 import com.luiz.todosimple.models.User;
-import com.luiz.todosimple.services.JWTUtil;
 
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter{
@@ -28,6 +26,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Autowired
     private JWTUtil jwt;
+
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtutil) {
         setAuthenticationFailureHandler(new GlobalExceptionHandler());

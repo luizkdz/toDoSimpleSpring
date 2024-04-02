@@ -6,7 +6,7 @@ import com.luiz.todosimple.models.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
-    <Optional> User findByUsername(String username);
+    User findByUsername(String username);
 
     // 
 

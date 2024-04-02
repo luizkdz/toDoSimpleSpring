@@ -1,7 +1,7 @@
 package com.luiz.todosimple.services;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.transaction.Transactional;
 
@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.luiz.todosimple.models.Task;
+
+import com.luiz.todosimple.models.Enums.ProfileEnum;
 import com.luiz.todosimple.repositories.TaskRepository;
+import com.luiz.todosimple.security.UserSpringSecurity;
 
 @Service
 public class TaskService {
@@ -21,22 +24,30 @@ public class TaskService {
 
 
 
-
-
-    public Task findById(long id){
-        Optional<Task> task = tr.findById(id);
-        return task.orElseThrow(() -> new ObjectNotFoundException("Não foi encontrada a task com esse id"));
+    public Task findById(Long id){
+        Task task = tr.findById(id).orElseThrow(() -> new ObjectNotFoundException("Não foi encontrada a task com esse id"));
+        UserSpringSecurity uss = UserService.authenticated();
+        if(!Objects.nonNull(uss) && !userHasTask(uss, task) && !uss.hasRole(ProfileEnum.ADMIN)){
+            throw new RuntimeException("Acesso negado");
+        }
+        return task;
     }
 
-    public List<Task> findAllByUserId(Long userId){
-        List<Task> lista = tr.findByUser_Id(userId);
+    public List<Task> findAllByUserId(){
+        UserSpringSecurity uss = UserService.authenticated();
+        if(Objects.isNull(uss))
+        throw new RuntimeException("Acesso negado");
+        List<Task> lista = tr.findByUser_Id(uss.getId());
         return lista;
     }
 
     
     @Transactional
     public Task createTask(Task tk){
-        us.findById(tk.getUser().getId()); 
+        UserSpringSecurity uss = UserService.authenticated();
+        if(!Objects.nonNull(uss))
+        throw new RuntimeException("Acesso negado");
+        us.findById(uss.getId()); 
         tk = tr.save(tk);
         return tk;      
     }
@@ -49,7 +60,7 @@ public class TaskService {
         return newTk;
     }
 
-    public void delete(long id){
+    public void delete(Long id){
         findById(id);
         try{
             tr.deleteById(id);
@@ -59,5 +70,7 @@ public class TaskService {
                 }
     }
 
-
+    public boolean userHasTask(UserSpringSecurity userSpringSecurity, Task task){
+        return task.getUser().getId().equals(userSpringSecurity.getId());
+    }
 }
