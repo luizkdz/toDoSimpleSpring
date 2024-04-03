@@ -64,7 +64,7 @@ public class UserService {
             ur.deleteById(id);
         }
         catch(Exception e) {
-            throw new DataBindingViolationException();
+            throw new DataBindingViolationException("Não foi possível deletar o usuario");
         }
     }
     public UserService() {

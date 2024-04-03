@@ -66,7 +66,7 @@ public class TaskService {
             tr.deleteById(id);
                 }
                 catch(Exception e){
-                    throw new DataBindingViolationException();
+                    throw new DataBindingViolationException("Não foi possível deletar a task");
                 }
     }
 
